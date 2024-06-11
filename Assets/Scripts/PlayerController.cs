@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
+    public float speed = 10f;
     public bool isFinish;
 
     public int score;
+
+    private Rigidbody2D rb;
 
     private void Awake()
     {
@@ -16,20 +18,23 @@ public class PlayerController : MonoBehaviour
     }
     private void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
         isFinish = false;
     }
     private void Update()
     {
-        if(Input.GetMouseButton(0))
+        if(Input.GetMouseButtonDown(0))
         {
             Vector3 pointTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (pointTouch.x < 0f)
+
+            if (pointTouch.x > 0f)
             {
-                Vector2.MoveTowards(transform.position, new Vector2(0, -1.5f), Time.deltaTime * speed);
+                rb.velocity = Vector2.down * speed;
             }
-            else if (pointTouch.x > 0f)
+            else if (pointTouch.x < 0f)
             {
-                Vector2.MoveTowards(transform.position, new Vector2(0, -0.5f), Time.deltaTime * speed);
+                rb.velocity = Vector2.up * speed;
+
             }
         }
     }
@@ -38,12 +43,14 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.collider.CompareTag("Trap"))
         {
+            rb.velocity = Vector2.zero;
             isFinish=true;
         }
         if (collision.collider.CompareTag("Fruit"))
         {
             score++;
             Destroy(collision.gameObject);
+            rb.velocity = Vector2.zero;
         }
     }
 }

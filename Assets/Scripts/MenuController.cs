@@ -59,6 +59,7 @@ public class MenuController : MonoBehaviour
             {
                 float sTimer = Time.time - timer;
                 txtTime.text = string.Format("{0:00}:{1:00}", sTimer / 60, sTimer % 60);
+                player.GetComponent<PlayerController>().speed = 10 * (1 + (Time.time - timer) / 60);
                 if (Time.time - timeSpawn >= 2f)
                 {
                     timeSpawn = Time.time;
@@ -75,7 +76,6 @@ public class MenuController : MonoBehaviour
                         FruitController script = item.GetComponent<FruitController>();
                         script.speed = 3 * (1 + (Time.time - timer) / 60);
                     }
-
                 }
             }
             
@@ -107,12 +107,13 @@ public class MenuController : MonoBehaviour
 
     public void btnStartGame()
     {
+        Destroy(characterSelected);
         isPlay = true;
         timer = Time.time;
         timeSpawn = Time.time;
         panelMenu.SetActive(false);
         panelPlay.SetActive(true);
-        player = Instantiate(birdPrefabs[indexBirdSelected], new Vector3(0, -0.5f, 0), Quaternion.identity);
+        player = Instantiate(birdPrefabs[indexBirdSelected], new Vector3(0, 0, 0), Quaternion.identity);
         int itemIndex = Random.Range(0, items.Length - 1);
         int point = Random.Range(0, 1);
         GameObject item = Instantiate(items[itemIndex], SpawnPoints[point].transform.position, Quaternion.identity);
