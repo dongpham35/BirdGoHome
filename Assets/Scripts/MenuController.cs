@@ -17,22 +17,29 @@ public class MenuController : MonoBehaviour
     [SerializeField] TMP_Text txtTime;
     [SerializeField] TMP_Text txtScoreFinish;
     [SerializeField] TMP_Text txtScorePlay;
+    [SerializeField] GameObject panelHighScore;
 
     private int indexBirdSelected;
     GameObject characterSelected;
     private float timer;
-    private bool isPlay;
+    public static bool isPlay;
     private float timeSpawn;
     private GameObject player;
+    private int HighScore;
 
     private void Awake()
     {
+        if (!PlayerPrefs.HasKey("Score"))
+        {
+            PlayerPrefs.SetInt("Score", 0);
+        }
         indexBirdSelected = 0;
         characterSelected = Instantiate(birdPrefabs[indexBirdSelected], Vector3.zero, Quaternion.identity);
         characterSelected.transform.SetParent(character.transform);
         panelMenu.SetActive(true);
         panelFinish.SetActive(false);
         panelPlay.SetActive(false);
+        panelHighScore.SetActive(false);
         isPlay = false;
         timer = 0;
     }
@@ -40,12 +47,17 @@ public class MenuController : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1;
+        if (PlayerPrefs.HasKey("Score"))
+        {
+            HighScore = PlayerPrefs.GetInt("Score");
+        }
+
     }
 
     private void Update()
     {
-     
-        if(isPlay)
+
+        if (isPlay)
         {
             txtScorePlay.text = "Score: " + player.GetComponent<PlayerController>().score.ToString();
             if (player.GetComponent<PlayerController>().isFinish)
@@ -134,5 +146,18 @@ public class MenuController : MonoBehaviour
         SceneManager.LoadScene("MenuGame");
     }
 
-    
+    public void OnShowScore()
+    {
+        if (PlayerPrefs.HasKey("Score"))
+        {
+            panelHighScore.SetActive(true);
+            TMP_Text txtHighScore = panelHighScore.GetComponentInChildren<TMP_Text>();
+            txtHighScore.text = PlayerPrefs.GetInt("Score").ToString();
+        }
+    }
+
+    public void TurnOffHighScore()
+    {
+        panelHighScore.SetActive(false);
+    }
 }

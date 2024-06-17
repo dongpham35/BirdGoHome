@@ -20,21 +20,29 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         isFinish = false;
+        
     }
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (score > PlayerPrefs.GetInt("Score"))
         {
-            Vector3 pointTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            if (pointTouch.x > 0f)
+            PlayerPrefs.SetInt("Score", score);
+        }
+        if (MenuController.isPlay)
+        {
+            if (Input.GetMouseButtonDown(0))
             {
-                rb.velocity = Vector2.down * speed;
-            }
-            else if (pointTouch.x < 0f)
-            {
-                rb.velocity = Vector2.up * speed;
+                Vector3 pointTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
+                if (pointTouch.x > 0f)
+                {
+                    rb.velocity = Vector2.down * speed;
+                }
+                else if (pointTouch.x < 0f)
+                {
+                    rb.velocity = Vector2.up * speed;
+
+                }
             }
         }
     }
@@ -46,7 +54,12 @@ public class PlayerController : MonoBehaviour
             rb.velocity = Vector2.zero;
             isFinish=true;
         }
-        if (collision.collider.CompareTag("Fruit"))
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Fruit"))
         {
             score++;
             Destroy(collision.gameObject);
